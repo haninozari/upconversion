@@ -81,13 +81,10 @@ def gaussCurvature(F):
 def gradientArea(func):
     (fx, fy) = np.gradient(func)
     G = fx**2 + fy**2
-<<<<<<< HEAD
     return area(G)
 
 def gradientMagnitude(func):
     (fx, fy) = np.gradient(func)
     G = fx**2 + fy**2
     return np.sqrt(G)
-=======
-    return area(G)
->>>>>>> e350bc1168030d1f40d3c0a9f57bcc4cb9375f39
+
