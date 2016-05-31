@@ -25,19 +25,22 @@ def uFun(*args):
 def gradient(func):
     fx = np.zeros_like(func)
     fy = fx
+    Nx, Ny = func.shape[0], func.shape[1]
+    hx, hy = 1.0/(Nx - 1), 1.0/(Ny - 1)
+    
     for i in range(1,fx.shape[0] - 1):
         for j in range(1, fx.shape[1] - 1):
-            fx[i, j] = (func[i + 1, j] - func[i - 1, j])/2
-            fy[i, j] = (func[i, j + 1] - func[i, j - 1])/2
+            fx[i, j] = (func[i + 1, j] - func[i - 1, j])/2/hx
+            fy[i, j] = (func[i, j + 1] - func[i, j - 1])/2/hy
     return (fx, fy)
 def area(func):
-    (fx, fy) = gradient(func)
-    fx = 100 * fx
-    fy = 100 * fy
+    (fx, fy) = np.gradient(func)
+    #fx = 100 * fx
+    #fy = 100 * fy
     g = np.ones_like(fx) + fx**2 + fy**2
-    N = np.size(g)
+    #N = np.size(g)
     A = np.sqrt(g)
-    return np.sum(A)/N
+    return np.sum(A)
     
 def linearSurface(func1, func2, dis):
     M = np.zeros((func1.size, dis))
@@ -66,18 +69,25 @@ def gauss(mean,sigma, length, a, b):
     return f
 
 def gaussCurvature(F):
-    h = F.shape[0]
+    '''    
+    Nx, Ny = F.shape[0], F.shape[1]
+    hx, hy = 1.0/(Nx - 1), 1.0/(Ny - 1)
     fxx = np.zeros_like(F)
     fyy = fxx
     fxy = fxx
     
     for i in range(1, F.shape[0] - 1):
         for j in range(1, F.shape[1] - 1):
-            fxx[i, j] = (F[i+1,j]- 2*F[i,j] + F[i-1,j])/h**2
-            fyy[i, j] = (F[i,j+1]- 2*F[i,j] + F[i,j-1])/h**2
-            fxy[i, j] = (F[i+1,j+1] + F[i-1,j-1] - F[i+1,j-1] - F[i-1,j+1])/4/h**2
-    c = fxx * fyy
-    return np.sum(c)
+            fxx[i, j] = (F[i+1,j]- 2*F[i,j] + F[i-1,j])/hx/hy
+            fyy[i, j] = (F[i,j+1]- 2*F[i,j] + F[i,j-1])/hx/hy
+            fxy[i, j] = (F[i+1,j+1] + F[i-1,j-1] - F[i+1,j-1] - F[i-1,j+1])/4/hx/hy
+    c = fxx * fyy - fxy**2
+    '''
+    Fx, Fy = np.gradient(F)
+    Fxx, Fxy = np.gradient(Fx)
+    _, Fyy = np.gradient(Fy)
+    c = Fxx * Fyy - Fxy**2    
+    return c
 def gradientArea(func):
     (fx, fy) = np.gradient(func)
     G = fx**2 + fy**2

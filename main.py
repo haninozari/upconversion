@@ -19,17 +19,15 @@ import pdeFunctions as pFun
 plt.close('all')
 N = 50 
 h = 1.0/(N-1)
-#F = np.zeros((N,N))
-iter = 100
+F = np.zeros((N,N))
+iter = 200
 alpha = 10
 #f1 = 20 * signal.gaussian(N, 3); f1 = np.roll(f1, 10)
 #f2 = 20 * signal.gaussian(N, 4); f2 = np.roll(f2, -10)
 eps = 1e-20
 f1 = 100 * pFun.gauss(-1, .6, N, -3, 3)
 f2 = 100 * pFun.gauss(1, .6, N, -3, 3)
-hm = pFun.linearSurface(f1, f2, N)
-pFun.mesh(hm)
-F = hm
+
 for i in range(N):
     F[i, 0] = f2[i]
     F[i, N-1] = f1[i]
@@ -64,6 +62,7 @@ for itr in range(iter):
 '''
 
 hi = pFun.idealRollFunc(f1, f2, N)
+hm = pFun.linearSurface(f1, f2, N)
 
 pFun.mesh(F)
 pFun.mesh(hi)
@@ -73,6 +72,16 @@ print(pFun.area(F))
 print(pFun.area(hi))
 print(pFun.area(hm))
 
-print(pFun.gradientArea(F))
-print(pFun.gradientArea(hi))
-print(pFun.gradientArea(hm))
+#print(pFun.gaussCurvature(F))
+#print(pFun.gaussCurvature(hi))
+#print(pFun.gaussCurvature(hm))
+
+pFun.mesh(pFun.gaussCurvature(F))
+pFun.mesh(pFun.gaussCurvature(hi))
+pFun.mesh(pFun.gaussCurvature(hm))
+
+#%%
+plt.figure(1), plt.imshow(pFun.gaussCurvature(F), cmap = plt.get_cmap('gray'))
+plt.figure(2), plt.imshowp(pFun.gaussCurvature(hi), cmap = plt.get_cmap('gray'))
+plt.figure(3), plt.imshow(pFun.gaussCurvature(hm), cmap = plt.get_cmap('gray'))
+
