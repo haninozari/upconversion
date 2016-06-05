@@ -11,14 +11,14 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 
 def uFun(*args):
-    F, i, j, h, alpha = args[0], args[1], args[2], args[3], args[4]   
-    fx = (F[i+1,j]-F[i-1,j])/2/h
-    fxx = (F[i+1,j]- 2*F[i,j] + F[i-1,j])/h**2
-    fy = (F[i,j+1]-F[i,j-1])/2/h
-    fyy = (F[i,j+1]- 2*F[i,j] + F[i,j-1])/h**2
-    fxy = (F[i+1,j+1] + F[i-1,j-1] - F[i+1,j-1] - F[i-1,j+1])/4/h**2
+    F, i, j, alpha = args[0], args[1], args[2], args[3]   
+    fx = (F[i+1,j]-F[i-1,j])/2
+    fxx = (F[i+1,j]- 2*F[i,j] + F[i-1,j])
+    fy = (F[i,j+1]-F[i,j-1])/2
+    fyy = (F[i,j+1]- 2*F[i,j] + F[i,j-1])
+    fxy = (F[i+1,j+1] + F[i-1,j-1] - F[i+1,j-1] - F[i-1,j+1])/4
     L = math.sqrt(1 + fx**2 + fy**2)
-    den = L**2 + 2 * alpha**2 * L**1.5
+    den = L + 2 * alpha**2 * L**2
     U = fx * (fx * fxx + fxy * fy) + fy * (fy * fyy + fxy * fx)
     return U/den
     
@@ -87,7 +87,8 @@ def gaussCurvature(F):
     Fxx, Fxy = np.gradient(Fx)
     _, Fyy = np.gradient(Fy)
     c = Fxx * Fyy - Fxy**2    
-    return c
+    return (c**2, np.sum(c**2))
+    
 def gradientArea(func):
     (fx, fy) = np.gradient(func)
     G = fx**2 + fy**2
@@ -98,3 +99,15 @@ def gradientMagnitude(func):
     G = fx**2 + fy**2
     return np.sqrt(G)
 
+def makeSurf():
+    N = 100
+    F = np.zeros((N,N))
+    for i in range(N):
+        f1 = 100 * gauss(-5 + i * 5/N, 2, N, -10, 10)
+        f2 = 100 * gauss(5 - i* 5/N, 2, N, -10, 10)
+        f = f1 + f2
+        f = f/f.max()
+        F[:, i] = f
+    return F
+
+        
